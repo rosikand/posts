@@ -1,0 +1,96 @@
+---
+title: "A Quick Workflow for Incorporating Images into your Markdown Documents using VS Code"
+author:
+  - name: Rohan Sikand
+    url: https://rosikand.github.io/
+date: "September 30, 2022"
+page-layout: article
+title-block-banner: "#f4f5f4" # "#102c3c"
+title-block-banner-color: "#353535"
+toc: true
+toc-location: left
+highlight-style: mokokai
+format: 
+  html: 
+    html-math-method: katex
+    self-contained: true
+    reference-location: margin
+    citation-location: margin
+  pdf: default
+jupyter: python3
+---
+
+
+For the past year and a half, I have been experimenting with my digital note-taking setup, ranging from live typesetting LaTeX to Apple Notes. I don't think I can find a *perfect* solution that meets all my needs. But I think we can get close. I plan to make a bigger post describing my setup in more detail (in a similar fashion to [castel.dev](castel.dev)), but one of the main components is what we discuss here: how to use VS Code to incorporate images into your Markdown documents. We use Markdown because it supports things like embedded LaTeX math and code fences (such features are pivotal when taking technical notes during class). 
+
+## The standard workflow 
+
+Incorporating images is a necessary function to have when typing notes, live, during lecture. And not only that, we need to do this *fast*. This is problematic in plain markdown because it requires us to...
+
+1. Download the image file and save it to some path
+2. Specify the path relative to your document like so: `![alt text](../some_long/path/im.png)` in the document itself. 
+
+In some ways, you'd be done there. But... most figures are quite large and take up majority of the page... 
+
+<p align="center">
+    <img alt="picture 1" src="https://cdn.jsdelivr.net/gh/minimatest/vscode-images/images/9abf2bc53d1e701cd13fb8dafc597dac1c1f4731f7ccec2ab89355144e6c2548.png" width="350" />  
+</p>
+
+no good! And guess what? There is no standard way to resize images in markdown! So you'd have to specify an HTML element like so:
+
+```txt
+<img src="http://www.fillmurray.com/460/300">
+```
+
+From here, you could in theory add image alignment and sizing, but this still takes another ~45 seconds:
+
+```txt
+<p align="center">
+    <img alt="picture 1" src="http://www.fillmurray.com/460/300" width="350" />  
+</p>
+```
+
+
+In all, this whole process probably takes ~2 minutes _per image_. And if you are typing live during a lecture, you'll quickly be lost in the content and won't be able to keep up with the lecturer. For these reasons, after playing around with various ideas, I describe a new workflow below. 
+
+## A new, efficient workflow 
+
+First of all, this workflow is **powered by**: 
+
+- VS Code (necessary to use due to the use of the extension listed below)
+- Markdown Image VS Code extension by Hancel.Lin ([link](https://marketplace.visualstudio.com/items?itemName=hancel.markdown-image))
+
+**The main philosophy**:
+
+- We want to upload the images on a remote server and retrieve a URL in return. We will use this as the path since it eliminates the need to download, save, and specify the path locally. 
+  - We use a public Github repo to upload the images to automatically. This allows us to store our images on Github's servers and retrieve a URL on the internet. 
+    - Note: You can also use this setup with some other CDN delivery network that the Markdown Image extension allows for (such as Cloudflare). But I personally think Github is the safest and best option. 
+
+
+### Setup  
+
+1. Make a new Github repo to store the images. 
+2. Open up the config settings for the above extension in VS Code. Specify the following fields based on your account info and repo: 
+    - branch
+    - path (i.e., the folder inside your GH repo where you want to store the images)
+    - repository name 
+    - token (your personal access token)
+3. Now change the base upload method field to 'Github' in the extension settings. 
+4. (Optional) while you are at it, you can also change the base image width in the extension settings, the code type (I prefer the HTML string over raw Markdown since it renders nicely in Github's web interface), the max image width (I use $300$-$400$). 
+5. (Optional) if you want center-alignment, make a VS Code snippet with the following code:
+
+```txt
+<p align="center">
+     
+</p>
+```
+and then paste your image in between the element block dividers. 
+
+And that's it! All you need to do is copy an image to your clipboard (i.e., from a screenshot) and paste it in using the extension by right-clicking and select (if enabled and there is other extensions overwriting the command): 
+
+
+<p align="center">
+    <img alt="picture 2" src="https://cdn.jsdelivr.net/gh/minimatest/vscode-images/images/dffbb1bb401b9254e8ef1a0ea246185e5da96b49932e95acf914fc87f2c960d3.png" width="300" />  
+</p>
+
+done! Now your image uploading should take about ~5 seconds (a much better improvement from ~2 minutes!). 
